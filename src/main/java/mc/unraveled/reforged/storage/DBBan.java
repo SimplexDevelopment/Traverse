@@ -30,7 +30,7 @@ public class DBBan {
     }
 
     @SneakyThrows
-    public void addBan(AbstractBan ban) {
+    public void insert(@NotNull AbstractBan ban) {
         PreparedStatement statement = getConnection().prepareStatement("INSERT INTO bans (uuid, ip, reason, banned_by, banned_at, expires_at, active) VALUES (?, ?, ?, ?, ?, ?, ?);");
         statement.setString(1, ban.getUuid());
         statement.setString(2, ban.getIp());
@@ -78,10 +78,37 @@ public class DBBan {
     }
 
     @SneakyThrows
-    public void close() {
-        getConnection().close();
+    public void update(@NotNull AbstractBan ban) {
+        PreparedStatement statement = getConnection().prepareStatement("UPDATE bans SET reason = ?, banned_by = ?, banned_at = ?, expires_at = ?, active = ? WHERE uuid = ?;");
+        statement.setString(1, ban.getReason());
+        statement.setString(2, ban.getSource());
+        statement.setLong(3, ban.getPropogated());
+        statement.setLong(4, ban.getExpiry());
+        statement.setBoolean(5, ban.isActive());
+        statement.setString(6, ban.getUuid());
+        statement.executeUpdate();
     }
 
+    @SneakyThrows
+    public void delete(@NotNull AbstractBan ban) {
+        PreparedStatement statement = getConnection().prepareStatement("DELETE FROM bans WHERE uuid = ?;");
+        statement.setString(1, ban.getUuid());
+        statement.executeUpdate();
+    }
 
+    @SneakyThrows
+    public void deleteAll() {
+        PreparedStatement statement = getConnection().prepareStatement("DELETE FROM bans;");
+        statement.executeUpdate();
+    }
 
+    @SneakyThrows
+    public void close() {
+        getConnection().close();
+        this.connection = null;
+    }
+
+    public void open(Connection connection) {
+        this.connection = connection;
+    }
 }

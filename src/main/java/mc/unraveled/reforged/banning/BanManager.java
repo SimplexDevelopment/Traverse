@@ -10,14 +10,14 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class LocalizedBanList implements Locker, Baker {
+public final class BanManager implements Locker, Baker {
     private final Traverse plugin;
 
     private Set<AbstractBan> storedBans; // This should only be reassigned by the baker.
     private boolean baked = false; // This should only be reassigned by the baker.
 
     @SneakyThrows
-    public LocalizedBanList(Traverse plugin) {
+    public BanManager(Traverse plugin) {
         this.storedBans = new HashSet<>();
         this.plugin = plugin;
 

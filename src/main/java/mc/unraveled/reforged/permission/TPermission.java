@@ -1,4 +1,4 @@
-package mc.unraveled.reforged.command.base;
+package mc.unraveled.reforged.permission;
 
 import org.bukkit.command.CommandSender;
 

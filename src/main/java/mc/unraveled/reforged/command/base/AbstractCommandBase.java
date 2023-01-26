@@ -1,6 +1,7 @@
 package mc.unraveled.reforged.command.base;
 
 import mc.unraveled.reforged.api.ICommandBase;
+import mc.unraveled.reforged.permission.TPermission;
 import mc.unraveled.reforged.util.BasicColors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;

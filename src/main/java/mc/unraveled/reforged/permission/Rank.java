@@ -1,16 +1,17 @@
 package mc.unraveled.reforged.permission;
 
+import mc.unraveled.reforged.util.BasicColors;
 import net.kyori.adventure.text.format.TextColor;
 
 public enum Rank {
-    EXECUTIVE("executive", "Exec", TextColor.color(254, 0, 0), 7),
-    DEV("developer", "Dev", TextColor.color(165, 0, 218), 6),
-    ADMIN("admin", "Admin", TextColor.color(214, 108, 32), 5),
-    MOD("mod", "Mod", TextColor.color(0, 198, 98), 4),
-    BUILDER("builder", "Bldr", TextColor.color(0, 168, 238), 3),
-    VIP("vip", "VIP", TextColor.color(238, 98, 150), 2),
-    OP("op", "OP", TextColor.color(198, 64, 64), 1),
-    NON_OP("guest", "", TextColor.color(178, 178, 178), 0);
+    EXECUTIVE("executive", "Exec", BasicColors.DARK_RED.getColor(), 7),
+    DEV("developer", "Dev", BasicColors.PURPLE.getColor(), 6),
+    ADMIN("admin", "Admin", BasicColors.GOLD.getColor(), 5),
+    MOD("mod", "Mod", BasicColors.GREEN.getColor(), 4),
+    BUILDER("builder", "Bldr", BasicColors.AQUA.getColor(), 3),
+    VIP("vip", "VIP", BasicColors.PINK.getColor(), 2),
+    OP("op", "OP", BasicColors.RED.getColor(), 1),
+    NON_OP("guest", "", BasicColors.WHITE.getColor(), 0);
 
     final RankAttachment attachment;
 

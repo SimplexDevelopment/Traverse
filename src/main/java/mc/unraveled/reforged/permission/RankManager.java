@@ -7,6 +7,7 @@ import mc.unraveled.reforged.plugin.Traverse;
 import mc.unraveled.reforged.storage.DBGroup;
 import mc.unraveled.reforged.util.Tuple;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -75,6 +76,22 @@ public class RankManager implements Baker, Locker {
         rankQueue.stream()
                 .filter(tuple -> tuple.getFirst().equals(rank))
                 .forEach(tuple -> tuple.getSecond().remove(player));
+    }
+
+    public void save() {
+        if (!baked) throw new IllegalStateException("You cannot save a rank manager that has not been baked!");
+
+        DBGroup groupHandler = new DBGroup(plugin.getSQLManager().establish());
+        bakedGroups.forEach(group -> {
+            for (OfflinePlayer p : group.getPlayers()) {
+                groupHandler.addPlayer(group.getRank(), p);
+            }
+
+            for (String arg : group.getPermissions()) {
+                groupHandler.addPermission(group.getRank(), arg);
+            }
+        });
+        groupHandler.close();
     }
 
     @Override

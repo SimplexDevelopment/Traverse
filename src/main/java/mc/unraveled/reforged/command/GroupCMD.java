@@ -63,6 +63,8 @@ public class GroupCMD extends AbstractCommandBase {
         RankManager manager = getPlugin().getRankManager();
         OfflinePlayer player;
 
+        manager.unbake();
+
         switch (target) {
             case "player":
                 if (getPlugin().getServer().getPlayer(value) != null) {
@@ -77,17 +79,25 @@ public class GroupCMD extends AbstractCommandBase {
 
                 if (actionType) {
                     manager.insertPlayer(rankContext.getContext(), player);
+                    manager.bake();
+                    manager.save();
                     return Component.text("Added player " + player.getName() + " to group " + group + "!").color(NamedTextColor.GREEN);
                 } else {
                     manager.ejectPlayer(rankContext.getContext(), player);
+                    manager.bake();
+                    manager.save();
                     return Component.text("Removed player " + player.getName() + " from group " + group + "!").color(NamedTextColor.GREEN);
                 }
             case "permission":
                 if (actionType) {
                     manager.insertPermission(rankContext.getContext(), value);
+                    manager.bake();
+                    manager.save();
                     return Component.text("Added permission " + value + " to group " + group + "!").color(NamedTextColor.GREEN);
                 } else {
                     manager.ejectPermission(rankContext.getContext(), value);
+                    manager.bake();
+                    manager.save();
                     return Component.text("Removed permission " + value + " from group " + group + "!").color(NamedTextColor.GREEN);
                 }
             default:

@@ -56,14 +56,14 @@ public class DBGroup {
     }
 
     @SneakyThrows
-    public void addPlayer(Rank rank, Player player) {
+    public void addPlayer(Rank rank, OfflinePlayer player) {
         PreparedStatement statement = getConnection().prepareStatement("INSERT INTO " + rank.getAttachment().getName() + " (uuid) VALUES (?);");
         statement.setString(1, player.getUniqueId().toString());
         statement.executeUpdate();
     }
 
     @SneakyThrows
-    public void removePlayer(Rank rank, Player player) {
+    public void removePlayer(Rank rank, OfflinePlayer player) {
         PreparedStatement statement = getConnection().prepareStatement("DELETE FROM " + rank.getAttachment().getName() + " WHERE uuid = ?;");
         statement.setString(1, player.getUniqueId().toString());
         statement.executeUpdate();

@@ -2,6 +2,7 @@ package mc.unraveled.reforged.command.base;
 
 import mc.unraveled.reforged.api.annotations.CommandInfo;
 import mc.unraveled.reforged.plugin.Traverse;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
@@ -39,6 +40,8 @@ public class CommandLoader {
                     info.description(),
                     info.usage(),
                     Arrays.asList(info.aliases()));
+            dummy.setPermission(command.getPermission());
+            dummy.permissionMessage(Component.text(command.getPermissionMessage()));
             commandList.add(dummy);
         } else {
             throw new RuntimeException("Missing a required annotation! Unable to load the command.");

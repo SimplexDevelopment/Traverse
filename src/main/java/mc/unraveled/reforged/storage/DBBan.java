@@ -31,14 +31,26 @@ public class DBBan {
 
     @SneakyThrows
     public void insert(@NotNull AbstractBan ban) {
-        PreparedStatement statement = getConnection().prepareStatement("INSERT INTO bans (uuid, ip, reason, banned_by, banned_at, expires_at, active) VALUES (?, ?, ?, ?, ?, ?, ?);");
+        PreparedStatement statement = getConnection().prepareStatement("IF NOT EXISTS (SELECT 1 FROM bans WHERE uuid = ?) " +
+                "BEGIN INSERT INTO bans (uuid, ip, reason, banned_by, banned_at, expires_at, active) VALUES (?, ?, ?, ?, ?, ?, ?) END " +
+                "ELSE BEGIN UPDATE bans SET ip = ?, reason = ?, banned_by = ?, banned_at = ?, expires_at = ?, active = ? WHERE uuid = ? END;");
+
         statement.setString(1, ban.getUuid());
-        statement.setString(2, ban.getIp());
-        statement.setString(3, ban.getReason());
-        statement.setString(4, ban.getSource());
-        statement.setLong(5, ban.getPropogated());
-        statement.setLong(6, ban.getExpiry());
-        statement.setBoolean(7, ban.isActive());
+        statement.setString(2, ban.getUuid());
+        statement.setString(3, ban.getIp());
+        statement.setString(4, ban.getReason());
+        statement.setString(5, ban.getSource());
+        statement.setLong(6, ban.getPropogated());
+        statement.setLong(7, ban.getExpiry());
+        statement.setBoolean(8, ban.isActive());
+        statement.setString(9, ban.getIp());
+        statement.setString(10, ban.getReason());
+        statement.setString(11, ban.getSource());
+        statement.setLong(12, ban.getPropogated());
+        statement.setLong(13, ban.getExpiry());
+        statement.setBoolean(14, ban.isActive());
+        statement.setString(15, ban.getUuid());
+
         statement.executeUpdate();
     }
 
@@ -75,18 +87,6 @@ public class DBBan {
                     rs.getBoolean("active")));
         }
         return bans;
-    }
-
-    @SneakyThrows
-    public void update(@NotNull AbstractBan ban) {
-        PreparedStatement statement = getConnection().prepareStatement("UPDATE bans SET reason = ?, banned_by = ?, banned_at = ?, expires_at = ?, active = ? WHERE uuid = ?;");
-        statement.setString(1, ban.getReason());
-        statement.setString(2, ban.getSource());
-        statement.setLong(3, ban.getPropogated());
-        statement.setLong(4, ban.getExpiry());
-        statement.setBoolean(5, ban.isActive());
-        statement.setString(6, ban.getUuid());
-        statement.executeUpdate();
     }
 
     @SneakyThrows

@@ -13,7 +13,7 @@ public abstract class TPermission {
      * @param allowConsole      Whether to allow the command to be run anywhere, or only in game.
      */
     public TPermission(String permission, String permissionMessage, boolean allowConsole) {
-        this.permission = permission;
+        this.permission = "traverse." + permission;
         this.permissionMessage = permissionMessage;
         this.allowConsole = allowConsole;
     }

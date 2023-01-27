@@ -32,7 +32,7 @@ public class DBUser {
     public void insert(@NotNull PlayerData playerData) {
         PreparedStatement statement = getConnection().prepareStatement("IF NOT EXISTS (SELECT 1 FROM users WHERE uuid = ?) " +
                 "BEGIN INSERT INTO users (uuid, username, rank, play_time, coins, last_login) VALUES (?, ?, ?, ?, ?, ?) END " +
-                "ELSE BEGIN (UPDATE users SET username = ?, rank = ?, play_time = ?, coins = ?, last_login = ? WHERE uuid = ?) END;");
+                "ELSE BEGIN UPDATE users SET username = ?, rank = ?, play_time = ?, coins = ?, last_login = ? WHERE uuid = ? END;");
 
         statement.setString(1, playerData.getUuid().toString());
         statement.setString(2, playerData.getUuid().toString());

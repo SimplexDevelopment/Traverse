@@ -65,6 +65,18 @@ public class RankManager implements Baker, Locker {
                 .forEach(tuple -> tuple.getThird().remove(permission));
     }
 
+    public void insertPlayer(Rank rank, OfflinePlayer player) {
+        rankQueue.stream()
+                .filter(tuple -> tuple.getFirst().equals(rank))
+                .forEach(tuple -> tuple.getSecond().add(player));
+    }
+
+    public void ejectPlayer(Rank rank, OfflinePlayer player) {
+        rankQueue.stream()
+                .filter(tuple -> tuple.getFirst().equals(rank))
+                .forEach(tuple -> tuple.getSecond().remove(player));
+    }
+
     @Override
     public void bake() {
         if (baked) return;

@@ -1,10 +1,13 @@
 package mc.unraveled.reforged.command.base;
 
+import lombok.Getter;
 import mc.unraveled.reforged.api.ICommandBase;
 import mc.unraveled.reforged.permission.TPermission;
+import mc.unraveled.reforged.plugin.Traverse;
 import mc.unraveled.reforged.util.BasicColors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -13,62 +16,75 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public abstract class AbstractCommandBase extends TPermission implements ICommandBase {
+    @Getter
+    private final Traverse plugin;
+
     /**
+     * @param plugin            The plugin that owns this command
      * @param permission        The permission the user should have to run the command
      * @param permissionMessage The message to send when the user does not have the permission to run the command.
      * @param allowConsole      Whether to allow the command to be run anywhere, or only in game.
      */
-    public AbstractCommandBase(@NotNull String permission, String permissionMessage, boolean allowConsole) {
+    public AbstractCommandBase(@NotNull Traverse plugin, @NotNull String permission, String permissionMessage, boolean allowConsole) {
         super(permission, permissionMessage, allowConsole);
+        this.plugin = plugin;
     }
 
     /**
+     * @param plugin            The plugin that owns this command
      * @param permission        The permission the user should have to run the command
      * @param permissionMessage The message to send when the user does not have the permission to run the command.
      */
-    public AbstractCommandBase(@NotNull String permission, String permissionMessage) {
-        this(permission, permissionMessage, true);
+    public AbstractCommandBase(@NotNull Traverse plugin, @NotNull String permission, String permissionMessage) {
+        this(plugin, permission, permissionMessage, true);
     }
 
     /**
+     * @param plugin       The plugin that owns this command
      * @param permission   The permission the user should have to run the command
      * @param allowConsole Whether to allow the command to be run anywhere, or only in game.
      */
-    public AbstractCommandBase(@NotNull String permission, boolean allowConsole) {
-        this(permission, "You do not have permission to use this command!", allowConsole);
+    public AbstractCommandBase(@NotNull Traverse plugin, @NotNull String permission, boolean allowConsole) {
+        this(plugin, permission, "You do not have permission to use this command!", allowConsole);
     }
 
     /**
+     * @param plugin     The plugin that owns this command
      * @param permission The permission the user should have to run the command
      */
-    public AbstractCommandBase(@NotNull String permission) {
-        this(permission, "You do not have permission to use this command!", true);
+    public AbstractCommandBase(@NotNull Traverse plugin, @NotNull String permission) {
+        this(plugin, permission, "You do not have permission to use this command!", true);
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String lbl, String[] args) {
         if (!hasPermission(sender)) {
-            sender.sendMessage(msg(getPermissionMessage(), BasicColors.RED));
+            sender.sendMessage(MessageDefaults.MSG_NO_PERMS);
             return true;
         }
 
         if (!(sender instanceof Player) && !allowConsole()) {
-            sender.sendMessage(msg("This command can only be run in game."));
+            sender.sendMessage(MessageDefaults.MSG_NOT_CONSOLE);
+            return true;
         }
 
-        sender.sendMessage(run(sender, args));
+        Component result = cmd(sender, args);
+
+        if (!result.equals(Component.empty())) {
+            sender.sendMessage(result);
+        }
+
         return true;
     }
 
     @Override
     public @Nullable
     List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        return new ArrayList<>();
+        return tab(sender, args);
     }
 
     /**
@@ -122,5 +138,13 @@ public abstract class AbstractCommandBase extends TPermission implements IComman
 
     public void disablePlugin(Plugin plugin) {
         Bukkit.getServer().getPluginManager().disablePlugin(plugin);
+    }
+
+    protected static class MessageDefaults {
+        public static Component MSG_NO_PERMS = Component.text("You do not have permission to use this command!").color(NamedTextColor.RED);
+        public static Component MSG_NOT_PLAYER = Component.text("This command can only be run through the console.").color(NamedTextColor.RED);
+        public static Component MSG_NOT_FOUND = Component.text("Player not found.").color(NamedTextColor.RED);
+        public static Component MSG_NOT_CONSOLE = Component.text("This command can only be run by a player.").color(NamedTextColor.RED);
+        public static Component MSG_NOT_ENOUGH_ARGS = Component.text("Not enough arguments.").color(NamedTextColor.RED);
     }
 }

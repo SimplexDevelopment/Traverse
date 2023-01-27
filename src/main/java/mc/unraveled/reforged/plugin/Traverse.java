@@ -2,7 +2,11 @@ package mc.unraveled.reforged.plugin;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
+import mc.unraveled.reforged.api.Locker;
 import mc.unraveled.reforged.banning.BanManager;
+import mc.unraveled.reforged.command.BanCMD;
+import mc.unraveled.reforged.command.GroupCMD;
+import mc.unraveled.reforged.command.TraverseCMD;
 import mc.unraveled.reforged.command.base.CommandLoader;
 import mc.unraveled.reforged.data.DataManager;
 import mc.unraveled.reforged.permission.RankManager;
@@ -10,7 +14,7 @@ import mc.unraveled.reforged.storage.DBConnectionHandler;
 import mc.unraveled.reforged.storage.DBProperties;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class Traverse extends JavaPlugin {
+public final class Traverse extends JavaPlugin implements Locker {
 
     // Primary variable declaration.
     @Getter
@@ -37,5 +41,18 @@ public final class Traverse extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+    }
+
+    @SneakyThrows
+    public void registerCommands() {
+        synchronized (lock()) {
+            getCommandLoader().register(new TraverseCMD(this),
+                    new BanCMD(this),
+                    new GroupCMD(this));
+            lock().wait(1000);
+        }
+
+        lock().notify();
+        getCommandLoader().load();
     }
 }

@@ -101,6 +101,7 @@ public class GroupCMD extends AbstractCommandBase {
                     return Component.text("Removed permission " + value + " from group " + group + "!").color(NamedTextColor.GREEN);
                 }
             default:
+                manager.bake();
                 return Component.text("Invalid target!").color(NamedTextColor.RED);
         }
     }

@@ -16,4 +16,5 @@ public class PlayerData {
     private long playtime;
     private int coins;
     private Date lastLogin;
+    private InfractionData infractionData;
 }

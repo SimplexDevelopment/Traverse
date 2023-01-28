@@ -69,6 +69,7 @@ public final class DataManager implements Baker, Locker {
     public void saveData(PlayerData data) {
         DBUser user = new DBUser(plugin.getSQLManager().establish());
         user.insert(data);
+        user.close();
     }
 
     @SneakyThrows

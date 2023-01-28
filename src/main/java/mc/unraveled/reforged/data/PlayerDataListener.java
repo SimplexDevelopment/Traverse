@@ -24,7 +24,7 @@ public class PlayerDataListener implements Listener {
         PlayerData data = plugin.getDataManager().getPlayerData(player.getUniqueId());
 
         if (data == null) {
-            data = new PlayerData(player.getUniqueId(), player.getName(), Rank.NON_OP, 0L, 0, Date.from(Instant.now()));
+            data = new PlayerData(player.getUniqueId(), player.getName(), Rank.NON_OP, 0L, 0, Date.from(Instant.now()), InfractionData.getCachedInfractionData(player));
             plugin.getDataManager().addPlayerData(data);
         }
 

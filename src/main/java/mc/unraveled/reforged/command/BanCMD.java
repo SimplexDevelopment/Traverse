@@ -8,6 +8,8 @@ import mc.unraveled.reforged.plugin.Traverse;
 import mc.unraveled.reforged.util.Utilities;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -26,19 +28,23 @@ public class BanCMD extends AbstractCommandBase {
     @Override
     public Component cmd(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            return Component.text("Usage: /ban <player> <reason> [duration]");
+            return Component.text("Usage: /ban <player> <duration> <reason>");
         }
 
         BanManager manager = getPlugin().getBanManager();
         OfflinePlayer target = (getPlugin().getServer().getPlayer(args[0]) != null) ? getPlugin().getServer().getPlayer(args[0]) : getPlugin().getServer().getOfflinePlayer(args[0]);
-        String reason = args[1];
-        String duration = args.length > 2 ? args[2] : String.valueOf(60 * 24L);
+        String duration = args[1];
+        String reason = StringUtils.join(ArrayUtils.subarray(args, 2, args.length - 1), " ");
 
         Date expiry = Utilities.parseDate(duration);
         String expiryString = Utilities.parseDateToString(expiry);
 
         if (target == null) {
             return MessageDefaults.MSG_NOT_FOUND;
+        }
+
+        if (reason.isEmpty() || duration.isEmpty()) {
+            return Component.text("Usage: /ban <player> <duration> <reason>");
         }
 
         manager.unbake();

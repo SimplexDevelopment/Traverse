@@ -2,8 +2,10 @@ package mc.unraveled.reforged.storage;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
+import mc.unraveled.reforged.data.InfractionData;
 import mc.unraveled.reforged.data.PlayerData;
 import mc.unraveled.reforged.permission.Rank;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
@@ -69,13 +71,16 @@ public class DBUser {
         PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM users;");
         ResultSet resultSet = statement.executeQuery();
         List<PlayerData> dataList = new ArrayList<>();
+        InfractionData data = InfractionData.getCachedInfractionData(Bukkit.getOfflinePlayer(UUID.fromString(resultSet.getString("uuid"))));
+
         while (resultSet.next()) {
             PlayerData playerData = new PlayerData(UUID.fromString(resultSet.getString("uuid")),
                     resultSet.getString("username"),
                     Rank.valueOf(resultSet.getString("rank")),
                     resultSet.getLong("play_time"),
                     resultSet.getInt("coins"),
-                    new Date(resultSet.getLong("last_login")));
+                    new Date(resultSet.getLong("last_login")),
+                    data);
             dataList.add(playerData);
         }
         return dataList;

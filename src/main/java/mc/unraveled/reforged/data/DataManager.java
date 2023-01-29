@@ -72,6 +72,12 @@ public final class DataManager implements Baker, Locker {
         user.close();
     }
 
+    public void saveCacheToDB() {
+        DBUser user = new DBUser(plugin.getSQLManager().establish());
+        playerDataCache.forEach(user::insert);
+        user.close();
+    }
+
     @SneakyThrows
     @Override
     public void bake() {

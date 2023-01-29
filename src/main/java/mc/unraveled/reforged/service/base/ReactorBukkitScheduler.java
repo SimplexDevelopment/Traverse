@@ -20,7 +20,7 @@ public final class ReactorBukkitScheduler
      */
     private final BukkitScheduler scheduler;
 
-    public ReactorBukkitScheduler(JavaPlugin plugin) {
+    public ReactorBukkitScheduler(@NotNull JavaPlugin plugin) {
         this.plugin = plugin;
         this.scheduler = plugin.getServer().getScheduler();
     }

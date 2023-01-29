@@ -13,17 +13,17 @@ public abstract class AbstractBan implements Serializable<AbstractBan> {
     private final String ip;
     private final String source;
     private final String reason;
-    private final long propogated;
+    private final long propagated;
     private final long expiry;
     private final List<Pair<String, String>> contentPairs;
     private boolean active;
 
-    public AbstractBan(String uuid, String ip, String source, String reason, long propogated, long expiry, boolean active) {
+    public AbstractBan(String uuid, String ip, String source, String reason, long propagated, long expiry, boolean active) {
         this.uuid = uuid;
         this.ip = ip;
         this.source = source;
         this.reason = reason;
-        this.propogated = propogated;
+        this.propagated = propagated;
         this.expiry = expiry;
         this.active = active;
 
@@ -32,7 +32,7 @@ public abstract class AbstractBan implements Serializable<AbstractBan> {
                 new Pair<>("ip", ip),
                 new Pair<>("source", source),
                 new Pair<>("reason", reason),
-                new Pair<>("propogated", String.valueOf(propogated)),
+                new Pair<>("propagated", String.valueOf(propagated)),
                 new Pair<>("expiry", String.valueOf(expiry)),
                 new Pair<>("active", String.valueOf(active))
         );
@@ -55,7 +55,7 @@ public abstract class AbstractBan implements Serializable<AbstractBan> {
         char ip = 'i';
         char reason = 'r';
         char source = 's';
-        char propogated = 'p';
+        char propagated = 'p';
         char expiry = 'e';
         char active = 'a';
 
@@ -63,7 +63,7 @@ public abstract class AbstractBan implements Serializable<AbstractBan> {
         String ipString = formatted.substring(formatted.indexOf(ip) + 1, formatted.indexOf(end));
         String reasonString = formatted.substring(formatted.indexOf(reason) + 1, formatted.indexOf(end));
         String sourceString = formatted.substring(formatted.indexOf(source) + 1, formatted.indexOf(end));
-        String propogatedString = formatted.substring(formatted.indexOf(propogated) + 1, formatted.indexOf(end));
+        String propagatedString = formatted.substring(formatted.indexOf(propagated) + 1, formatted.indexOf(end));
         String expiryString = formatted.substring(formatted.indexOf(expiry) + 1, formatted.indexOf(end));
         String activeString = formatted.substring(formatted.indexOf(active) + 1, formatted.indexOf(end));
 
@@ -71,7 +71,7 @@ public abstract class AbstractBan implements Serializable<AbstractBan> {
                 ipString,
                 reasonString,
                 sourceString,
-                Long.parseLong(propogatedString),
+                Long.parseLong(propagatedString),
                 Long.parseLong(expiryString),
                 Boolean.parseBoolean(activeString));
     }

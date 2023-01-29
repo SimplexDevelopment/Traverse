@@ -17,7 +17,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @CommandInfo(name = "group",
         description = "Manages groups for all players.",
-        usage = "/group <add | del> <player> <group>")
+        usage = "/group <add | del> <player> <group>",
+        aliases = {"g"})
 public class GroupCMD extends AbstractCommandBase {
     private final Rank[] ranks = Rank.values();
 

@@ -146,5 +146,7 @@ public abstract class AbstractCommandBase extends TPermission implements IComman
         public static Component MSG_NOT_FOUND = Component.text("Player not found.").color(NamedTextColor.RED);
         public static Component MSG_NOT_CONSOLE = Component.text("This command can only be run by a player.").color(NamedTextColor.RED);
         public static Component MSG_NOT_ENOUGH_ARGS = Component.text("Not enough arguments.").color(NamedTextColor.RED);
+        public static Component MUTED = Component.text("You are muted!").color(NamedTextColor.RED);
+        public static Component BANNED = Component.text("You are banned!").color(NamedTextColor.RED);
     }
 }

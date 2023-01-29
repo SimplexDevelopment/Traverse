@@ -40,13 +40,13 @@ public class DBBan {
         statement.setString(3, ban.getIp());
         statement.setString(4, ban.getReason());
         statement.setString(5, ban.getSource());
-        statement.setLong(6, ban.getPropogated());
+        statement.setLong(6, ban.getPropagated());
         statement.setLong(7, ban.getExpiry());
         statement.setBoolean(8, ban.isActive());
         statement.setString(9, ban.getIp());
         statement.setString(10, ban.getReason());
         statement.setString(11, ban.getSource());
-        statement.setLong(12, ban.getPropogated());
+        statement.setLong(12, ban.getPropagated());
         statement.setLong(13, ban.getExpiry());
         statement.setBoolean(14, ban.isActive());
         statement.setString(15, ban.getUuid());

@@ -6,6 +6,8 @@ import mc.unraveled.reforged.api.Baker;
 import mc.unraveled.reforged.api.Locker;
 import mc.unraveled.reforged.plugin.Traverse;
 import mc.unraveled.reforged.storage.DBBan;
+import mc.unraveled.reforged.storage.DBUser;
+import org.bukkit.OfflinePlayer;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -40,13 +42,32 @@ public final class BanManager implements Locker, Baker {
 
         lock().notify();
         storedBans.add(ban);
+        DBBan db = new DBBan(plugin.getSQLManager().establish());
+        db.insert(ban);
+        db.close();
     }
 
     public void eject(AbstractBan ban) {
         if (baked) throw new IllegalStateException("Cannot eject from a baked list.");
 
         lock().notify();
-        storedBans.remove(ban);
+
+        DBBan db = new DBBan(plugin.getSQLManager().establish());
+        db.delete(ban);
+        db.close();
+    }
+
+    public AbstractBan getBan(OfflinePlayer player) {
+        DBBan db = new DBBan(plugin.getSQLManager().establish());
+        AbstractBan ban = db.getBan(player.getUniqueId());
+        db.close();
+        return ban;
+    }
+
+    public boolean isBanned(OfflinePlayer player) {
+        return storedBans.stream()
+                .anyMatch(ban -> ban.getUuid().equalsIgnoreCase(
+                        player.getUniqueId().toString()));
     }
 
     public void save() {
@@ -56,7 +77,6 @@ public final class BanManager implements Locker, Baker {
         DBBan banHandler = new DBBan(plugin.getSQLManager().establish());
         storedBans.forEach(banHandler::insert);
         banHandler.close();
-
     }
 
     @Override

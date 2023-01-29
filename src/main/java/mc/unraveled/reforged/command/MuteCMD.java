@@ -39,7 +39,8 @@ public class MuteCMD extends AbstractCommandBase {
         if (duration == 0) return Component.text("Invalid duration.");
 
         MuteService service = new MuteService(getPlugin().getPIPELINE(), "MuteService", duration);
-
+        service.setInfractionData(infData);
+            
         if (!infData.isMuted()) {
             infData.setMuted(true);
             getPlugin().getScheduler().queue(service).subscribe();

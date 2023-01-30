@@ -15,7 +15,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @CommandInfo(name = "ban",
         description = "Ban a player. Use -n as the second parameter for the default ban reason.",
@@ -66,5 +68,23 @@ public class BanCMD extends AbstractCommandBase {
         manager.bake();
         manager.save();
         return Component.text("Successfully banned user " + target.getName() + " for " + reason + " until " + expiryString).color(NamedTextColor.YELLOW);
+    }
+
+    @Override
+    public List<String> tab(CommandSender sender, String[] args) {
+        List<String> completions = new ArrayList<>();
+        if (args.length == 1) {
+            return Utilities.playerCompletions(args[0]);
+        }
+
+        if (args.length == 2) {
+            return Utilities.stringCompletions(args[1], "duration", "1d", "1h", "5m");
+        }
+
+        if (args.length == 3) {
+            return Utilities.stringCompletions(args[2], "reason", "-n");
+        }
+
+        return completions;
     }
 }

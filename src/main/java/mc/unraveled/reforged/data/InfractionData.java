@@ -14,7 +14,7 @@ import java.util.Map;
 public class InfractionData {
     private static final Map<OfflinePlayer, InfractionData> playerInfractionDataMap = new HashMap<>() {{
         DBInfraction infraction = new DBInfraction(JavaPlugin.getPlugin(Traverse.class).getSQLManager().establish());
-        for (InfractionData data : infraction.getStoredInfractionsFromUUID()) {
+        for (InfractionData data : infraction.getInfractionsList()) {
             put(data.getPlayer(), data);
         }
     }};

@@ -44,11 +44,18 @@ public class DBInfraction {
                 SQLConst.END +
                 SQLConst.SEMICOLON);
         statement.setString(1, player.getUniqueId().toString());
-        statement.setInt(2, data.getInfractions());
-        statement.setBoolean(3, data.isMuted());
-        statement.setBoolean(4, data.isFrozen());
-        statement.setBoolean(5, data.isLocked());
-        statement.setBoolean(6, data.isJailed());
+        statement.setString(2, player.getUniqueId().toString());
+        statement.setInt(3, data.getInfractions());
+        statement.setBoolean(4, data.isMuted());
+        statement.setBoolean(5, data.isFrozen());
+        statement.setBoolean(6, data.isLocked());
+        statement.setBoolean(7, data.isJailed());
+        statement.setInt(8, data.getInfractions());
+        statement.setBoolean(9, data.isMuted());
+        statement.setBoolean(10, data.isFrozen());
+        statement.setBoolean(11, data.isLocked());
+        statement.setBoolean(12, data.isJailed());
+        statement.setString(13, player.getUniqueId().toString());
         statement.executeUpdate();
 
     }
@@ -61,7 +68,7 @@ public class DBInfraction {
     }
 
     @SneakyThrows
-    public List<InfractionData> getStoredInfractionsFromUUID() {
+    public List<InfractionData> getInfractionsList() {
         List<InfractionData> temp = new ArrayList<>();
 
         PreparedStatement statement = connection.prepareStatement(SELECT);

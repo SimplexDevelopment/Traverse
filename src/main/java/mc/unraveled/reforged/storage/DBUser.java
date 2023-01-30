@@ -26,15 +26,15 @@ public class DBUser {
 
     @SneakyThrows
     public void createTable() {
-        PreparedStatement statement = getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS users (uuid VARCHAR(36), username VARCHAR(16), rank VARCHAR(64), play_time BIGINT, coins BIGINT, last_login BIGINT, PRIMARY KEY (uuid));");
+        PreparedStatement statement = getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS users (uuid VARCHAR(36), username VARCHAR(16), rank VARCHAR(64), play_time BIGINT, coins BIGINT, last_login BIGINT, login_message VARCHAR(64), PRIMARY KEY (uuid));");
         statement.executeUpdate();
     }
 
     @SneakyThrows
     public void insert(@NotNull PlayerData playerData) {
         PreparedStatement statement = getConnection().prepareStatement("IF NOT EXISTS (SELECT 1 FROM users WHERE uuid = ?) " +
-                "BEGIN INSERT INTO users (uuid, username, rank, play_time, coins, last_login) VALUES (?, ?, ?, ?, ?, ?) END " +
-                "ELSE BEGIN UPDATE users SET username = ?, rank = ?, play_time = ?, coins = ?, last_login = ? WHERE uuid = ? END;");
+                "BEGIN INSERT INTO users (uuid, username, rank, play_time, coins, last_login, login_message) VALUES (?, ?, ?, ?, ?, ?, ?) END " +
+                "ELSE BEGIN UPDATE users SET username = ?, rank = ?, play_time = ?, coins = ?, last_login = ?, login_message = ?, WHERE uuid = ? END;");
 
         statement.setString(1, playerData.getUuid().toString());
         statement.setString(2, playerData.getUuid().toString());
@@ -43,12 +43,14 @@ public class DBUser {
         statement.setLong(5, playerData.getPlaytime());
         statement.setInt(6, playerData.getCoins());
         statement.setLong(7, playerData.getLastLogin().getTime());
-        statement.setString(8, playerData.getUserName());
-        statement.setString(9, playerData.getRank().name());
-        statement.setLong(10, playerData.getPlaytime());
-        statement.setInt(11, playerData.getCoins());
-        statement.setLong(12, playerData.getLastLogin().getTime());
-        statement.setString(13, playerData.getUuid().toString());
+        statement.setString(8, playerData.getLoginMessage());
+        statement.setString(9, playerData.getUserName());
+        statement.setString(10, playerData.getRank().name());
+        statement.setLong(11, playerData.getPlaytime());
+        statement.setInt(12, playerData.getCoins());
+        statement.setLong(13, playerData.getLastLogin().getTime());
+        statement.setString(14, playerData.getLoginMessage());
+        statement.setString(15, playerData.getUuid().toString());
 
         statement.executeUpdate();
     }
@@ -67,6 +69,14 @@ public class DBUser {
     }
 
     @SneakyThrows
+    public void setLoginMessage(String uuid, String message) {
+        PreparedStatement statement = getConnection().prepareStatement("UPDATE users SET login_message = ? WHERE uuid = ?;");
+        statement.setString(1, message);
+        statement.setString(2, uuid);
+        statement.executeUpdate();
+    }
+
+    @SneakyThrows
     public List<PlayerData> all() {
         PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM users;");
         ResultSet resultSet = statement.executeQuery();
@@ -80,6 +90,7 @@ public class DBUser {
                     resultSet.getLong("play_time"),
                     resultSet.getInt("coins"),
                     new Date(resultSet.getLong("last_login")),
+                    resultSet.getString("login_message"),
                     data);
             dataList.add(playerData);
         }

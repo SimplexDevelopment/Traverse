@@ -8,8 +8,10 @@ import reactor.core.publisher.Mono;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 public final class Utilities {
 
@@ -114,5 +116,20 @@ public final class Utilities {
      */
     public static Mono<OfflinePlayer> getOfflinePlayer(String name) {
         return Mono.create(sink -> sink.success(Bukkit.getOfflinePlayer(name)));
+    }
+
+    public static List<String> playerCompletions(String arg) {
+        return Bukkit.getOnlinePlayers()
+                .stream()
+                .map(OfflinePlayer::getName)
+                .filter(Objects::nonNull)
+                .filter(s -> s.startsWith(arg))
+                .toList();
+    }
+
+    public static List<String> stringCompletions(String arg, String... completions) {
+        return Stream.of(completions)
+                .filter(s -> s.startsWith(arg))
+                .toList();
     }
 }

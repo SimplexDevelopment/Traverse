@@ -16,5 +16,6 @@ public class PlayerData {
     private long playtime;
     private int coins;
     private Date lastLogin;
+    private String loginMessage;
     private InfractionData infractionData;
 }

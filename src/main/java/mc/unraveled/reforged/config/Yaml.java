@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 
 @Getter
-abstract class Yaml extends YamlConfiguration implements Baker {
+public abstract class Yaml extends YamlConfiguration implements Baker {
     private final String fileName;
     private final File dataFolder;
     private final Traverse plugin;

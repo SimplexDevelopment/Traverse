@@ -4,11 +4,13 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import mc.unraveled.reforged.api.Locker;
 import mc.unraveled.reforged.banning.BanManager;
-import mc.unraveled.reforged.command.BanCMD;
-import mc.unraveled.reforged.command.GroupCMD;
-import mc.unraveled.reforged.command.TraverseCMD;
+import mc.unraveled.reforged.command.*;
 import mc.unraveled.reforged.command.base.CommandLoader;
+import mc.unraveled.reforged.config.YamlManager;
 import mc.unraveled.reforged.data.DataManager;
+import mc.unraveled.reforged.data.LoginManager;
+import mc.unraveled.reforged.economy.EconomyManager;
+import mc.unraveled.reforged.listening.InfractionListener;
 import mc.unraveled.reforged.permission.RankManager;
 import mc.unraveled.reforged.service.base.Scheduling;
 import mc.unraveled.reforged.service.base.ServicePool;
@@ -33,6 +35,12 @@ public final class Traverse extends JavaPlugin implements Locker {
     private Scheduling scheduler;
     @Getter
     private ServicePool PIPELINE;
+    @Getter
+    private EconomyManager economyManager;
+    @Getter
+    private LoginManager loginManager;
+    @Getter
+    private YamlManager yamlManager;
 
     @Override
     @SneakyThrows
@@ -44,6 +52,12 @@ public final class Traverse extends JavaPlugin implements Locker {
         this.rankManager = new RankManager(this);
         this.scheduler = new Scheduling(this);
         this.PIPELINE = new ServicePool("PIPELINE", this);
+        this.economyManager = new EconomyManager(this);
+        this.loginManager = new LoginManager(this);
+        this.yamlManager = new YamlManager(this);
+
+        registerCommands();
+        registerListeners();
     }
 
     @Override
@@ -58,13 +72,24 @@ public final class Traverse extends JavaPlugin implements Locker {
     @SneakyThrows
     public void registerCommands() {
         synchronized (lock()) {
-            getCommandLoader().register(new TraverseCMD(this),
+            getCommandLoader().register(
                     new BanCMD(this),
-                    new GroupCMD(this));
+                    new BankCMD(this),
+                    new EntityPurgeCMD(this),
+                    new GroupCMD(this),
+                    new MuteCMD(this),
+                    new PardonCMD(this),
+                    new TraverseCMD(this),
+                    new UnmuteCMD(this)
+            );
             lock().wait(1000);
         }
 
         lock().notify();
         getCommandLoader().load();
+    }
+
+    public void registerListeners() {
+        new InfractionListener(this);
     }
 }

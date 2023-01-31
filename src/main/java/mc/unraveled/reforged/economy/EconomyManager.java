@@ -19,7 +19,6 @@ public class EconomyManager {
     private final RegisteredServiceProvider<Economy> rsp;
     private final Map<Player, List<EconomyRequest>> requests = new HashMap<>(); // This is NOT persistent.
     private final Economy economy;
-    private final Coin coin;
 
     public EconomyManager(@NotNull Traverse plugin) {
         if (plugin.getServer().getPluginManager().getPlugin("Vault") == null)
@@ -30,8 +29,6 @@ public class EconomyManager {
         if (rsp == null) throw new MissingResourceException("Economy not found", Economy.class.getName(), "Economy");
 
         economy = rsp.getProvider();
-
-        coin = new Coin("Sheccies", "$", 1);
     }
 
     public EconomyResponse newAccount(OfflinePlayer player) {

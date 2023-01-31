@@ -72,4 +72,18 @@ public abstract class Yaml extends YamlConfiguration implements Baker {
             getPlugin().getLogger().warning("Failed to unbake " + getFileName());
         }
     }
+
+    @SneakyThrows
+    public void saveToFile() {
+        unbake();
+        super.save(yamlFile);
+        bake();
+    }
+
+    @SneakyThrows
+    public void loadFromFile() {
+        unbake();
+        super.load(yamlFile);
+        bake();
+    }
 }

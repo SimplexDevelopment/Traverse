@@ -6,6 +6,7 @@ import mc.unraveled.reforged.api.Locker;
 import mc.unraveled.reforged.banning.BanManager;
 import mc.unraveled.reforged.command.*;
 import mc.unraveled.reforged.command.base.CommandLoader;
+import mc.unraveled.reforged.config.Yaml;
 import mc.unraveled.reforged.config.YamlManager;
 import mc.unraveled.reforged.data.DataManager;
 import mc.unraveled.reforged.data.LoginManager;
@@ -18,8 +19,13 @@ import mc.unraveled.reforged.storage.DBConnectionHandler;
 import mc.unraveled.reforged.storage.DBProperties;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+
 public final class Traverse extends JavaPlugin implements Locker {
 
+    // Secondary variable declaration.
+    private final String CONFIG_FILE = "config.yml";
+    private final File CONFIG = new File(getDataFolder(), CONFIG_FILE);
     // Primary variable declaration.
     @Getter
     private DBConnectionHandler SQLManager;
@@ -41,6 +47,8 @@ public final class Traverse extends JavaPlugin implements Locker {
     private LoginManager loginManager;
     @Getter
     private YamlManager yamlManager;
+    @Getter
+    private Yaml yamlConfig;
 
     @Override
     @SneakyThrows
@@ -66,6 +74,7 @@ public final class Traverse extends JavaPlugin implements Locker {
         this.dataManager.saveCacheToDB();
         this.PIPELINE.recycle();
         this.rankManager.save();
+        this.yamlConfig.saveToFile();
         // Plugin shutdown logic
     }
 
@@ -91,5 +100,26 @@ public final class Traverse extends JavaPlugin implements Locker {
 
     public void registerListeners() {
         new InfractionListener(this);
+    }
+
+    @SneakyThrows
+    public void registerConfig() {
+        Yaml yaml;
+        if (CONFIG.createNewFile()) {
+            yaml = getYamlManager().bldr()
+                    .fileName(CONFIG_FILE)
+                    .dataFolder(getDataFolder())
+                    .copyDefaults(true)
+                    .build();
+        } else {
+            yaml = getYamlManager().bldr()
+                    .fileName(CONFIG_FILE)
+                    .dataFolder(getDataFolder())
+                    .copyDefaults(false)
+                    .build();
+        }
+        this.yamlConfig = yaml;
+
+        getYamlConfig().loadFromFile();
     }
 }

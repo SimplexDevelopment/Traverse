@@ -5,6 +5,7 @@ import mc.unraveled.reforged.api.Baker;
 import mc.unraveled.reforged.api.Locker;
 import mc.unraveled.reforged.plugin.Traverse;
 import mc.unraveled.reforged.storage.DBUser;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -40,6 +41,13 @@ public final class DataManager implements Baker, Locker {
                 .filter(data -> data.getUuid().equals(uuid))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public void updatePlayer(UUID uuid, PlayerData data) {
+        if (baked) throw new IllegalStateException("Cannot update player data while the data manager is baked.");
+
+        playerDataCache.removeIf(playerData -> playerData.getUuid().equals(uuid));
+        playerDataCache.add(data);
     }
 
     public void addPlayerData(PlayerData data) {

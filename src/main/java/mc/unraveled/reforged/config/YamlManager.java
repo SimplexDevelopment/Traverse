@@ -63,9 +63,10 @@ public class YamlManager {
             }
         });
     }
-    public static class Builder {
 
+    public static class Builder {
         private final Traverse plugin;
+
         private String fileName;
         private File dataFolder;
         private boolean copyDefaults;
@@ -76,6 +77,8 @@ public class YamlManager {
 
         public Builder fileName(String fileName) {
             this.fileName = fileName;
+            this.dataFolder = plugin.getDataFolder();
+            this.copyDefaults = false;
             return this;
         }
 
@@ -90,7 +93,8 @@ public class YamlManager {
         }
 
         public Yaml build() {
-            return new Yaml(plugin, fileName, dataFolder, copyDefaults){};
+            return new Yaml(plugin, fileName, dataFolder, copyDefaults) {
+            };
         }
     }
 }

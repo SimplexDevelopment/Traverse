@@ -3,18 +3,18 @@ package mc.unraveled.reforged.storage;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import mc.unraveled.reforged.data.InfractionData;
+import mc.unraveled.reforged.data.LoginInfo;
 import mc.unraveled.reforged.data.PlayerData;
 import mc.unraveled.reforged.permission.Rank;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class DBUser {
     @Getter
@@ -69,11 +69,106 @@ public class DBUser {
     }
 
     @SneakyThrows
+    public void setLastLogin(String uuid, long lastLogin) {
+        PreparedStatement statement = getConnection().prepareStatement("UPDATE users SET last_login = ? WHERE uuid = ?;");
+        statement.setLong(1, lastLogin);
+        statement.setString(2, uuid);
+        statement.executeUpdate();
+    }
+
+    @SneakyThrows
+    public Date getLastLogin(String uuid) {
+        PreparedStatement statement = getConnection().prepareStatement("SELECT last_login FROM users WHERE uuid = ?;");
+        statement.setString(1, uuid);
+        ResultSet resultSet = statement.executeQuery();
+        long lastLogin = 0;
+
+        while (resultSet.next()) {
+            lastLogin = resultSet.getLong("last_login");
+        }
+
+        return new Date(lastLogin);
+    }
+
+    @SneakyThrows
+    public void setCoins(String uuid, int coins) {
+        PreparedStatement statement = getConnection().prepareStatement("UPDATE users SET coins = ? WHERE uuid = ?;");
+        statement.setInt(1, coins);
+        statement.setString(2, uuid);
+        statement.executeUpdate();
+    }
+
+    @SneakyThrows
+    public int getCoins(String uuid) {
+        PreparedStatement statement = getConnection().prepareStatement("SELECT coins FROM users WHERE uuid = ?;");
+        statement.setString(1, uuid);
+        ResultSet resultSet = statement.executeQuery();
+        int coins = 0;
+
+        while (resultSet.next()) {
+            coins = resultSet.getInt("coins");
+        }
+
+        return coins;
+    }
+
+    @SneakyThrows
+    public void setRank(String uuid, @NotNull Rank rank) {
+        PreparedStatement statement = getConnection().prepareStatement("UPDATE users SET rank = ? WHERE uuid = ?;");
+        statement.setString(1, rank.name());
+        statement.setString(2, uuid);
+        statement.executeUpdate();
+    }
+
+    @SneakyThrows
+    public Rank getRank(String uuid) {
+        PreparedStatement statement = getConnection().prepareStatement("SELECT rank FROM users WHERE uuid = ?;");
+        statement.setString(1, uuid);
+        ResultSet resultSet = statement.executeQuery();
+        Rank rank = Rank.NON_OP;
+
+        while (resultSet.next()) {
+            rank = Rank.valueOf(resultSet.getString("rank"));
+        }
+
+        return rank;
+    }
+
+    @SneakyThrows
     public void setLoginMessage(String uuid, String message) {
         PreparedStatement statement = getConnection().prepareStatement("UPDATE users SET login_message = ? WHERE uuid = ?;");
         statement.setString(1, message);
         statement.setString(2, uuid);
         statement.executeUpdate();
+    }
+
+    @SneakyThrows
+    public Map<OfflinePlayer, LoginInfo> getLoginMessages() {
+        PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM users;");
+        ResultSet resultSet = statement.executeQuery();
+        Map<OfflinePlayer, LoginInfo> loginInfoMap = new HashMap<>();
+
+        while (resultSet.next()) {
+            OfflinePlayer player = Bukkit.getPlayer(UUID.fromString(resultSet.getString("uuid")));
+            LoginInfo loginInfo = new LoginInfo();
+            loginInfoMap.put(player, loginInfo);
+        }
+        return loginInfoMap;
+    }
+
+    @SneakyThrows
+    public LoginInfo getLoginInfo(String uuid) {
+        PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM users WHERE uuid = ?;");
+        statement.setString(1, uuid);
+        ResultSet resultSet = statement.executeQuery();
+        LoginInfo loginInfo = new LoginInfo();
+
+        while (resultSet.next()) {
+            Component c = Component.text(resultSet.getString("login_message"));
+            loginInfo.setLoginMessage(c);
+        }
+
+        return loginInfo;
     }
 
     @SneakyThrows

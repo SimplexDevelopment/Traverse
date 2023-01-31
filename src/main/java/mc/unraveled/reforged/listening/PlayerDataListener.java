@@ -6,7 +6,6 @@ import mc.unraveled.reforged.permission.Rank;
 import mc.unraveled.reforged.plugin.Traverse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.time.Instant;

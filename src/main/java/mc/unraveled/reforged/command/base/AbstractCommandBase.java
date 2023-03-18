@@ -1,6 +1,5 @@
 package mc.unraveled.reforged.command.base;
 
-import lombok.Getter;
 import mc.unraveled.reforged.api.ICommandBase;
 import mc.unraveled.reforged.permission.TPermission;
 import mc.unraveled.reforged.plugin.Traverse;
@@ -12,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +18,6 @@ import java.util.List;
 import java.util.UUID;
 
 public abstract class AbstractCommandBase extends TPermission implements ICommandBase {
-    @Getter
     private final Traverse plugin;
 
     /**
@@ -29,7 +26,7 @@ public abstract class AbstractCommandBase extends TPermission implements IComman
      * @param permissionMessage The message to send when the user does not have the permission to run the command.
      * @param allowConsole      Whether to allow the command to be run anywhere, or only in game.
      */
-    public AbstractCommandBase(@NotNull Traverse plugin, @NotNull String permission, String permissionMessage, boolean allowConsole) {
+    protected AbstractCommandBase(@NotNull Traverse plugin, @NotNull String permission, String permissionMessage, boolean allowConsole) {
         super(permission, permissionMessage, allowConsole);
         this.plugin = plugin;
     }
@@ -39,7 +36,7 @@ public abstract class AbstractCommandBase extends TPermission implements IComman
      * @param permission        The permission the user should have to run the command
      * @param permissionMessage The message to send when the user does not have the permission to run the command.
      */
-    public AbstractCommandBase(@NotNull Traverse plugin, @NotNull String permission, String permissionMessage) {
+    protected AbstractCommandBase(@NotNull Traverse plugin, @NotNull String permission, String permissionMessage) {
         this(plugin, permission, permissionMessage, true);
     }
 
@@ -48,20 +45,24 @@ public abstract class AbstractCommandBase extends TPermission implements IComman
      * @param permission   The permission the user should have to run the command
      * @param allowConsole Whether to allow the command to be run anywhere, or only in game.
      */
-    public AbstractCommandBase(@NotNull Traverse plugin, @NotNull String permission, boolean allowConsole) {
-        this(plugin, permission, "You do not have permission to use this command!", allowConsole);
+    protected AbstractCommandBase(@NotNull Traverse plugin, @NotNull String permission, boolean allowConsole) {
+        this(plugin, permission, MessageDefaults.MSG_NO_PERMS.toString(), allowConsole);
     }
 
     /**
      * @param plugin     The plugin that owns this command
      * @param permission The permission the user should have to run the command
      */
-    public AbstractCommandBase(@NotNull Traverse plugin, @NotNull String permission) {
-        this(plugin, permission, "You do not have permission to use this command!", true);
+    protected AbstractCommandBase(@NotNull Traverse plugin, @NotNull String permission) {
+        this(plugin, permission, MessageDefaults.MSG_NO_PERMS.toString(), true);
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String lbl, String[] args) {
+        if (lbl.equalsIgnoreCase("")) {
+            return false;
+        }
+
         if (!hasPermission(sender)) {
             sender.sendMessage(MessageDefaults.MSG_NO_PERMS);
             return true;
@@ -132,12 +133,8 @@ public abstract class AbstractCommandBase extends TPermission implements IComman
         Bukkit.getServer().broadcast(msg(text, color));
     }
 
-    public void enablePlugin(Plugin plugin) {
-        Bukkit.getServer().getPluginManager().enablePlugin(plugin);
-    }
-
-    public void disablePlugin(Plugin plugin) {
-        Bukkit.getServer().getPluginManager().disablePlugin(plugin);
+    public Traverse getPlugin() {
+        return plugin;
     }
 
     protected static class MessageDefaults {
@@ -149,5 +146,8 @@ public abstract class AbstractCommandBase extends TPermission implements IComman
         public static final Component MSG_NOT_ENOUGH_ARGS = Component.text("Not enough arguments.").color(NamedTextColor.RED);
         public static final Component MUTED = Component.text("You are muted!").color(NamedTextColor.RED);
         public static final Component BANNED = Component.text("You are banned!").color(NamedTextColor.RED);
+        private MessageDefaults() {
+            throw new AssertionError();
+        }
     }
 }

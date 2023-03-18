@@ -4,6 +4,7 @@ import mc.unraveled.reforged.util.BasicColors;
 import net.kyori.adventure.text.format.TextColor;
 
 public enum Rank {
+    CONSOLE("console", "RCON", BasicColors.PURPLE.getColor(), 8),
     EXECUTIVE("executive", "Exec", BasicColors.DARK_RED.getColor(), 7),
     DEV("developer", "Dev", BasicColors.PURPLE.getColor(), 6),
     ADMIN("admin", "Admin", BasicColors.GOLD.getColor(), 5),

@@ -12,7 +12,7 @@ public abstract class TPermission {
      * @param permissionMessage The message to send when the user does not have the permission to run the command.
      * @param allowConsole      Whether to allow the command to be run anywhere, or only in game.
      */
-    public TPermission(String permission, String permissionMessage, boolean allowConsole) {
+    protected TPermission(String permission, String permissionMessage, boolean allowConsole) {
         this.permission = "traverse." + permission;
         this.permissionMessage = permissionMessage;
         this.allowConsole = allowConsole;

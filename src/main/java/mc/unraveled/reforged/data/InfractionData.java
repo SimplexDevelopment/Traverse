@@ -1,7 +1,5 @@
 package mc.unraveled.reforged.data;
 
-import lombok.Getter;
-import lombok.Setter;
 import mc.unraveled.reforged.plugin.Traverse;
 import mc.unraveled.reforged.storage.DBInfraction;
 import org.bukkit.OfflinePlayer;
@@ -12,29 +10,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class InfractionData {
-    private static final Map<OfflinePlayer, InfractionData> playerInfractionDataMap = new HashMap<>() {{
-        DBInfraction infraction = new DBInfraction(JavaPlugin.getPlugin(Traverse.class).getSQLManager().establish());
-        for (InfractionData data : infraction.getInfractionsList()) {
-            put(data.getPlayer(), data);
-        }
-    }};
+    private static final Map<OfflinePlayer, InfractionData> playerInfractionDataMap = new HashMap<>();
 
-    @Getter
     private final OfflinePlayer player;
-    @Getter
     private int infractions = 0;
-
-    @Getter
-    @Setter
     private boolean muted = false;
-    @Getter
-    @Setter
     private boolean frozen = false;
-    @Getter
-    @Setter
     private boolean locked = false;
-    @Getter
-    @Setter
     private boolean jailed = false;
 
     public InfractionData(OfflinePlayer player) {
@@ -48,6 +30,11 @@ public class InfractionData {
         this.frozen = frozen;
         this.locked = locked;
         this.jailed = jailed;
+
+        DBInfraction infraction = new DBInfraction(JavaPlugin.getPlugin(Traverse.class).getSQLManager().establish());
+        for (InfractionData data : infraction.getInfractionsList()) {
+            playerInfractionDataMap.put(data.getPlayer(), data);
+        }
     }
 
     public static InfractionData getCachedInfractionData(OfflinePlayer player) {
@@ -59,6 +46,50 @@ public class InfractionData {
         InfractionData data = infraction.getInfraction(player.getUniqueId().toString());
         infraction.close();
         return data;
+    }
+
+    public OfflinePlayer getPlayer() {
+        return player;
+    }
+
+    public int getInfractions() {
+        return infractions;
+    }
+
+    public void setInfractions(int infractions) {
+        this.infractions = infractions;
+    }
+
+    public boolean isMuted() {
+        return muted;
+    }
+
+    public void setMuted(boolean muted) {
+        this.muted = muted;
+    }
+
+    public boolean isFrozen() {
+        return frozen;
+    }
+
+    public void setFrozen(boolean frozen) {
+        this.frozen = frozen;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
+    public boolean isJailed() {
+        return jailed;
+    }
+
+    public void setJailed(boolean jailed) {
+        this.jailed = jailed;
     }
 
     public void increment() {

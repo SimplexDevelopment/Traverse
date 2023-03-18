@@ -15,7 +15,7 @@ public final class SQLConst {
         return "IF NOT EXISTS (SELECT * FROM " + v + ") ";
     }
 
-    public static String IF(String v, String u) {
-        return "IF NOT EXISTS (SELECT * FROM " + v + " WHERE " + u + " = ?) ";
+    public static String IF(String v, String u, String literal) {
+        return "IF NOT EXISTS (SELECT * FROM " + v + " WHERE " + u + " = " + literal + ") ";
     }
 }

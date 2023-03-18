@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Class-Path: reactor-core-3.4.10.jar reactive-streams-1.0.3.jar
+

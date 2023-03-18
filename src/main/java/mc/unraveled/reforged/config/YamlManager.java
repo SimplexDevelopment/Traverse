@@ -1,8 +1,7 @@
 package mc.unraveled.reforged.config;
 
-import lombok.Getter;
-import lombok.SneakyThrows;
 import mc.unraveled.reforged.plugin.Traverse;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,13 +10,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
 public class YamlManager {
     private final List<Yaml> configurations = new ArrayList<>();
     private final Traverse plugin;
 
     public YamlManager(Traverse plugin) {
         this.plugin = plugin;
+    }
+
+    public List<Yaml> getConfigurations() {
+        return configurations;
+    }
+
+    public Traverse getPlugin() {
+        return plugin;
     }
 
     public Builder bldr() {
@@ -32,14 +38,20 @@ public class YamlManager {
         configurations.remove(yaml);
     }
 
-    @SneakyThrows
     public void load(@NotNull Yaml yaml) {
-        yaml.load(yaml.getYamlFile());
+        try {
+            yaml.load(yaml.getYamlFile());
+        } catch (IOException | InvalidConfigurationException e) {
+            Bukkit.getLogger().severe("Failed to load " + yaml.getYamlFile().getName() + "!");
+        }
     }
 
-    @SneakyThrows
     public void save(@NotNull Yaml yaml) {
-        yaml.save(yaml.getYamlFile());
+        try {
+            yaml.save(yaml.getYamlFile());
+        } catch (IOException e) {
+            Bukkit.getLogger().severe("Failed to save " + yaml.getYamlFile().getName() + "!");
+        }
     }
 
     public void loadAll() {

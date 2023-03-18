@@ -1,0 +1,10 @@
+name: Traverse
+version: '1.0.0'
+main: mc.unraveled.reforged.plugin.Traverse
+api-version: 1.19
+authors: [ SimplexDevelopment ]
+description: "A plugin designed for the Unraveled: Reforged server."
+website: https://github.com/SimplexDevelopment/Traverse
+depend: [ Vault ]
+softdepend: [ EssentialsX, EssentialsXSpawn ]
+

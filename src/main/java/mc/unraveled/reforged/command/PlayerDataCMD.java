@@ -1,6 +1,7 @@
-package mc.unraveled.reforged.command.base;
+package mc.unraveled.reforged.command;
 
 import mc.unraveled.reforged.api.annotations.CommandInfo;
+import mc.unraveled.reforged.command.base.AbstractCommandBase;
 import mc.unraveled.reforged.data.InfractionData;
 import mc.unraveled.reforged.data.PlayerData;
 import mc.unraveled.reforged.permission.Rank;
@@ -24,7 +25,7 @@ public class PlayerDataCMD extends AbstractCommandBase {
     @Override
     public Component cmd(CommandSender sender, String[] args) {
         switch (args.length) {
-            case 0:
+            case 0 -> {
                 if (sender instanceof Player player) {
                     PlayerData data = getPlugin().getDataManager().getPlayerData(player.getUniqueId());
 
@@ -46,8 +47,8 @@ public class PlayerDataCMD extends AbstractCommandBase {
 
                     return Component.text(sb);
                 } else return Component.text("This command can only be used by players!");
-
-            case 2:
+            }
+            case 2 -> {
                 if (args[1].equalsIgnoreCase("info")) {
                     Player target = getPlugin().getServer().getPlayer(args[0]);
                     if (target == null) return MessageDefaults.MSG_NOT_FOUND;
@@ -73,7 +74,8 @@ public class PlayerDataCMD extends AbstractCommandBase {
                 } else {
                     return usage();
                 }
-            case 3:
+            }
+            case 3 -> {
                 if (args[1].equalsIgnoreCase("reset")) {
                     Player target = getPlugin().getServer().getPlayer(args[0]);
                     if (target == null) return MessageDefaults.MSG_NOT_FOUND;
@@ -127,10 +129,10 @@ public class PlayerDataCMD extends AbstractCommandBase {
                             return Component.text("Invalid data type!").color(NamedTextColor.RED);
                     }
                 }
-            case 4:
+            }
+            case 4 -> {
                 Player target = getPlugin().getServer().getPlayer(args[0]);
                 if (target == null) return MessageDefaults.MSG_NOT_FOUND;
-
                 if (args[1].equalsIgnoreCase("set")) {
                     switch (args[2]) {
                         case "rank":
@@ -183,9 +185,12 @@ public class PlayerDataCMD extends AbstractCommandBase {
                 } else {
                     return usage();
                 }
-            default:
+            }
+            default -> {
                 return usage();
+            }
         }
+        return null;
     }
 
     private Component usage() {

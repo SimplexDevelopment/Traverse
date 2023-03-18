@@ -1,30 +1,27 @@
 package mc.unraveled.reforged.data;
 
-import lombok.Getter;
 import mc.unraveled.reforged.api.Baker;
 import mc.unraveled.reforged.listening.AbstractListener;
 import mc.unraveled.reforged.plugin.Traverse;
 import mc.unraveled.reforged.storage.DBUser;
 import mc.unraveled.reforged.util.Pair;
-import net.kyori.adventure.text.Component;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Getter
 public class LoginManager implements Baker {
     private final Traverse plugin;
     private Set<Pair<OfflinePlayer, LoginInfo>> dataSet = new HashSet<>(); // VALUE ONLY MODIFIED BY BAKER
     private boolean baked = false;
 
-    public LoginManager(Traverse plugin) {
+    public LoginManager(@NotNull Traverse plugin) {
         this.plugin = plugin;
 
         DBUser user = new DBUser(plugin.getSQLManager().establish());
@@ -34,6 +31,18 @@ public class LoginManager implements Baker {
         bake();
 
         new LoginListener(plugin);
+    }
+
+    public Traverse getPlugin() {
+        return plugin;
+    }
+
+    public Set<Pair<OfflinePlayer, LoginInfo>> getDataSet() {
+        return dataSet;
+    }
+
+    public boolean isBaked() {
+        return baked;
     }
 
     public void add(OfflinePlayer player, LoginInfo data) {

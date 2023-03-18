@@ -1,13 +1,12 @@
 package mc.unraveled.reforged.banning;
 
-import lombok.Getter;
 import mc.unraveled.reforged.api.Serializable;
 import mc.unraveled.reforged.util.Pair;
 import mc.unraveled.reforged.util.Utilities;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-@Getter
 public abstract class AbstractBan implements Serializable<AbstractBan> {
     private final String uuid;
     private final String ip;
@@ -38,6 +37,38 @@ public abstract class AbstractBan implements Serializable<AbstractBan> {
         );
     }
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public long getPropagated() {
+        return propagated;
+    }
+
+    public long getExpiry() {
+        return expiry;
+    }
+
+    public List<Pair<String, String>> getContentPairs() {
+        return contentPairs;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
     public void setActive(boolean active) {
         this.active = active;
     }
@@ -48,8 +79,7 @@ public abstract class AbstractBan implements Serializable<AbstractBan> {
     }
 
     @Override
-    public AbstractBan deserialize(String formatted) {
-        char delimiter = ':';
+    public AbstractBan deserialize(@NotNull String formatted) {
         char end = ';';
         char uuid = 'u';
         char ip = 'i';

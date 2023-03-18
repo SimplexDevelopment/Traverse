@@ -1,11 +1,8 @@
 package mc.unraveled.reforged.data;
 
-import lombok.SneakyThrows;
 import mc.unraveled.reforged.api.Baker;
-import mc.unraveled.reforged.api.Locker;
 import mc.unraveled.reforged.plugin.Traverse;
 import mc.unraveled.reforged.storage.DBUser;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -13,7 +10,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public final class DataManager implements Baker, Locker {
+public final class DataManager implements Baker {
+    public static final String MANAGER_IS_BAKED = "Cannot remove player data while the data manager is baked.";
     private final Traverse plugin;
     private Set<PlayerData> playerDataCache = new HashSet<>(); // Should only be set by the baker.
     private boolean baked = false; // Should only be set by the baker.
@@ -57,19 +55,19 @@ public final class DataManager implements Baker, Locker {
     }
 
     public void removePlayerData(PlayerData data) {
-        if (baked) throw new IllegalStateException("Cannot remove player data while the data manager is baked.");
+        if (baked) throw new IllegalStateException(MANAGER_IS_BAKED);
 
         playerDataCache.remove(data);
     }
 
     public void removePlayerData(UUID uuid) {
-        if (baked) throw new IllegalStateException("Cannot remove player data while the data manager is baked.");
+        if (baked) throw new IllegalStateException(MANAGER_IS_BAKED);
 
         playerDataCache.removeIf(data -> data.getUuid().equals(uuid));
     }
 
     public void removePlayerData(String playerName) {
-        if (baked) throw new IllegalStateException("Cannot remove player data while the data manager is baked.");
+        if (baked) throw new IllegalStateException(MANAGER_IS_BAKED);
 
         playerDataCache.removeIf(data -> data.getUserName().equals(playerName));
     }
@@ -86,31 +84,21 @@ public final class DataManager implements Baker, Locker {
         user.close();
     }
 
-    @SneakyThrows
     @Override
     public void bake() {
         if (baked) return;
 
-        synchronized (lock()) {
-            this.playerDataCache = playerDataCache.stream().collect(Collectors.toUnmodifiableSet());
-            lock().wait(1000);
-        }
+        this.playerDataCache = playerDataCache.stream().collect(Collectors.toUnmodifiableSet());
 
         this.baked = true;
-        lock().notify();
     }
 
-    @SneakyThrows
     @Override
     public void unbake() {
         if (!baked) return;
 
-        synchronized (lock()) {
-            this.playerDataCache = new HashSet<>(playerDataCache);
-            lock().wait(1000);
-        }
+        this.playerDataCache = new HashSet<>(playerDataCache);
 
         this.baked = false;
-        lock().notify();
     }
 }

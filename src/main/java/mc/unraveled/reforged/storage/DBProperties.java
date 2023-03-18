@@ -1,12 +1,11 @@
 package mc.unraveled.reforged.storage;
 
-import lombok.Getter;
+import org.bukkit.Bukkit;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-@Getter
 public class DBProperties {
     private final Properties properties;
     private final String url;
@@ -20,10 +19,10 @@ public class DBProperties {
 
     public DBProperties(String fileName) {
         properties = new Properties();
-        try {
-            properties.load(new FileInputStream(fileName));
+        try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
+            properties.load(fileInputStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            Bukkit.getLogger().severe("Could not load database properties file!");
         }
         driver = properties.getProperty("driver");
         databaseType = properties.getProperty("databaseType");
@@ -33,5 +32,41 @@ public class DBProperties {
         username = properties.getProperty("username");
         password = properties.getProperty("password");
         url = driver + ":" + databaseType + "://" + host + ":" + port + "/" + databaseFile;
+    }
+
+    public Properties getProperties() {
+        return properties;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getDriver() {
+        return driver;
+    }
+
+    public String getDatabaseType() {
+        return databaseType;
+    }
+
+    public String getDatabaseFile() {
+        return databaseFile;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public String getPort() {
+        return port;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
     }
 }

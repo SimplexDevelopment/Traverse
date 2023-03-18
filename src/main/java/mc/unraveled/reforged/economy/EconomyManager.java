@@ -1,6 +1,5 @@
 package mc.unraveled.reforged.economy;
 
-import lombok.Getter;
 import mc.unraveled.reforged.plugin.Traverse;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -9,26 +8,34 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.MissingResourceException;
+import java.util.*;
 
-@Getter
 public class EconomyManager {
     private final RegisteredServiceProvider<Economy> rsp;
-    private final Map<Player, List<EconomyRequest>> requests = new HashMap<>(); // This is NOT persistent.
+    private final Map<UUID, List<EconomyRequest>> requests = new HashMap<>(); // This is NOT persistent.
     private final Economy economy;
 
     public EconomyManager(@NotNull Traverse plugin) {
         if (plugin.getServer().getPluginManager().getPlugin("Vault") == null)
-            throw new RuntimeException("Vault is REQUIRED!");
+            throw new MissingResourceException("Vault is REQUIRED!", "Vault", "VaultAPI");
 
         rsp = plugin.getServer().getServicesManager().getRegistration(Economy.class);
 
         if (rsp == null) throw new MissingResourceException("Economy not found", Economy.class.getName(), "Economy");
 
         economy = rsp.getProvider();
+    }
+
+    public RegisteredServiceProvider<Economy> getRsp() {
+        return rsp;
+    }
+
+    public Map<UUID, List<EconomyRequest>> getRequests() {
+        return requests;
+    }
+
+    public Economy getEconomy() {
+        return economy;
     }
 
     public EconomyResponse newAccount(OfflinePlayer player) {
@@ -42,10 +49,10 @@ public class EconomyManager {
     public EconomyRequest request(@NotNull OfflinePlayer from, @NotNull OfflinePlayer to, int amount) {
         EconomyRequest request = new EconomyRequest(this, (Player) from, (Player) to, amount);
 
-        if (requests.containsKey(to)) {
-            requests.get(to).add(request);
+        if (requests.containsKey(to.getUniqueId())) {
+            requests.get(to.getUniqueId()).add(request);
         } else {
-            requests.put((Player) to, List.of(request));
+            requests.put(to.getUniqueId(), List.of(request));
         }
 
         return request;

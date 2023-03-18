@@ -1,46 +1,44 @@
 package mc.unraveled.reforged.banning;
 
-import lombok.Getter;
-import lombok.SneakyThrows;
 import mc.unraveled.reforged.api.Baker;
-import mc.unraveled.reforged.api.Locker;
 import mc.unraveled.reforged.plugin.Traverse;
 import mc.unraveled.reforged.storage.DBBan;
-import mc.unraveled.reforged.storage.DBUser;
 import org.bukkit.OfflinePlayer;
 
+import java.sql.Date;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public final class BanManager implements Locker, Baker {
-    @Getter
+public final class BanManager implements Baker {
     private final Traverse plugin;
 
     private Set<AbstractBan> storedBans; // This should only be reassigned by the baker.
-    @Getter
     private boolean baked = false; // This should only be reassigned by the baker.
 
-    @SneakyThrows
     public BanManager(Traverse plugin) {
         this.storedBans = new HashSet<>();
         this.plugin = plugin;
 
-        synchronized (lock()) {
-            DBBan banHandler = new DBBan(plugin.getSQLManager().establish());
-            storedBans.addAll(banHandler.all());
-            banHandler.close();
-
-            lock().wait(1000);
-        }
+        DBBan banHandler = new DBBan(plugin.getSQLManager().establish());
+        storedBans.addAll(banHandler.all());
+        banHandler.close();
 
         bake();
+    }
+
+    public Traverse getPlugin() {
+        return plugin;
+    }
+
+    public boolean isBaked() {
+        return baked;
     }
 
     public void insert(AbstractBan ban) {
         if (baked) throw new IllegalStateException("Cannot insert into a baked list.");
 
-        lock().notify();
         storedBans.add(ban);
         DBBan db = new DBBan(plugin.getSQLManager().establish());
         db.insert(ban);
@@ -50,8 +48,7 @@ public final class BanManager implements Locker, Baker {
     public void eject(AbstractBan ban) {
         if (baked) throw new IllegalStateException("Cannot eject from a baked list.");
 
-        lock().notify();
-
+        storedBans.remove(ban);
         DBBan db = new DBBan(plugin.getSQLManager().establish());
         db.delete(ban);
         db.close();
@@ -66,13 +63,22 @@ public final class BanManager implements Locker, Baker {
 
     public boolean isBanned(OfflinePlayer player) {
         return storedBans.stream()
+                .filter(AbstractBan::isActive)
+                .filter(ban -> {
+                    Date date = new Date(ban.getExpiry());
+                    if (date.before(Date.from(Instant.now()))) {
+                        eject(ban);
+                        return false;
+                    } else {
+                        return true;
+                    }
+                })
                 .anyMatch(ban -> ban.getUuid().equalsIgnoreCase(
                         player.getUniqueId().toString()));
     }
 
     public void save() {
         if (!baked) throw new IllegalStateException("Cannot save an unbaked list.");
-        lock().notify();
 
         DBBan banHandler = new DBBan(plugin.getSQLManager().establish());
         storedBans.forEach(banHandler::insert);
@@ -83,7 +89,6 @@ public final class BanManager implements Locker, Baker {
     public void bake() {
         if (baked) return;
 
-        lock().notify();
         storedBans = storedBans.stream().collect(Collectors.toUnmodifiableSet());
 
         baked = true;
@@ -93,7 +98,6 @@ public final class BanManager implements Locker, Baker {
     public void unbake() {
         if (!baked) return;
 
-        lock().notify();
         storedBans = new HashSet<>(storedBans);
 
         baked = false;

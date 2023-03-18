@@ -1,18 +1,13 @@
 package mc.unraveled.reforged.economy;
 
-import lombok.Getter;
-import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.entity.Player;
 
 public class EconomyRequest {
-    @Getter
+
     private final Player sender;
-    @Getter
     private final Player target;
-    @Getter
     private final int amount;
     private final EconomyManager economy;
 
@@ -21,6 +16,18 @@ public class EconomyRequest {
         this.target = target;
         this.amount = amount;
         this.economy = economy;
+    }
+
+    public Player getSender() {
+        return sender;
+    }
+
+    public Player getTarget() {
+        return target;
+    }
+
+    public int getAmount() {
+        return amount;
     }
 
     public EconomyResponse accept() {
@@ -34,7 +41,7 @@ public class EconomyRequest {
         sender.sendMessage(Component.text("Your request has been accepted."));
         target.sendMessage(Component.text("You have accepted " + sender.getName() + "'s request."));
 
-        economy.getRequests().get(target).remove(this);
+        economy.getRequests().get(target.getUniqueId()).remove(this);
 
         return r;
     }
@@ -43,6 +50,6 @@ public class EconomyRequest {
         sender.sendMessage(Component.text("Your request has been denied."));
         target.sendMessage(Component.text("You have denied " + sender.getName() + "'s request."));
 
-        economy.getRequests().get(target).remove(this);
+        economy.getRequests().get(target.getUniqueId()).remove(this);
     }
 }

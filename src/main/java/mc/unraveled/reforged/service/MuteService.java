@@ -1,7 +1,5 @@
 package mc.unraveled.reforged.service;
 
-import lombok.Getter;
-import lombok.Setter;
 import mc.unraveled.reforged.data.InfractionData;
 import mc.unraveled.reforged.service.base.AbstractService;
 import mc.unraveled.reforged.service.base.ServicePool;
@@ -10,11 +8,14 @@ import org.jetbrains.annotations.Nullable;
 import reactor.core.publisher.Mono;
 
 public class MuteService extends AbstractService {
-    @Setter
     private InfractionData infractionData = null;
 
     public MuteService(@Nullable ServicePool parentPool, @NotNull String service_name, long delay) {
         super(parentPool, service_name, delay);
+    }
+
+    public void setInfractionData(InfractionData infractionData) {
+        this.infractionData = infractionData;
     }
 
     @Override

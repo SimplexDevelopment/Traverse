@@ -2,6 +2,7 @@ package mc.unraveled.reforged.listening;
 
 import mc.unraveled.reforged.data.InfractionData;
 import mc.unraveled.reforged.data.PlayerData;
+import mc.unraveled.reforged.data.PlayerDataBuilder;
 import mc.unraveled.reforged.permission.Rank;
 import mc.unraveled.reforged.plugin.Traverse;
 import org.bukkit.entity.Player;
@@ -22,14 +23,17 @@ public class PlayerDataListener extends AbstractListener {
         PlayerData data = getPlugin().getDataManager().getPlayerData(player.getUniqueId());
 
         if (data == null) {
-            data = new PlayerData(player.getUniqueId(),
-                    player.getName(),
-                    Rank.NON_OP,
-                    0L,
-                    0,
-                    Date.from(Instant.now()),
-                    null,
-                    InfractionData.getCachedInfractionData(player));
+            PlayerDataBuilder builder = new PlayerDataBuilder()
+                    .setUuid(player.getUniqueId())
+                    .setUserName(player.getName())
+                    .setRank(Rank.NON_OP)
+                    .setPlaytime(0L)
+                    .setCoins(0)
+                    .setLastLogin(Date.from(Instant.now()))
+                    .setLoginMessage(null)
+                    .setInfractionData(InfractionData.getCachedInfractionData(player))
+                    .compile();
+            data = new PlayerData(builder);
             getPlugin().getDataManager().addPlayerData(data);
         }
 

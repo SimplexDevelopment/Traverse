@@ -1,22 +1,20 @@
 package mc.unraveled.reforged.config;
 
-import lombok.Getter;
-import lombok.SneakyThrows;
 import mc.unraveled.reforged.api.Baker;
 import mc.unraveled.reforged.plugin.Traverse;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
 
-@Getter
 public abstract class Yaml extends YamlConfiguration implements Baker {
     private final String fileName;
     private final File dataFolder;
     private final Traverse plugin;
     private final File yamlFile;
-
-    @Getter
     private boolean baked = false;
 
     Yaml(@NotNull Traverse plugin, String fileName, File dataFolder, boolean copyDefaults) {
@@ -40,15 +38,38 @@ public abstract class Yaml extends YamlConfiguration implements Baker {
         this(plugin, fileName, false);
     }
 
+    public String getFileName() {
+        return fileName;
+    }
+
+    public File getDataFolder() {
+        return dataFolder;
+    }
+
+    public Traverse getPlugin() {
+        return plugin;
+    }
+
+    public File getYamlFile() {
+        return yamlFile;
+    }
+
+    public boolean isBaked() {
+        return baked;
+    }
+
     /**
      * Makes the file read only after saving to disk.
      */
-    @SneakyThrows
     @Override
     public void bake() {
         if (baked) return;
 
-        super.save(yamlFile);
+        try {
+            super.save(yamlFile);
+        } catch (IOException e) {
+            Bukkit.getLogger().severe(e.getMessage());
+        }
 
         if (yamlFile.setWritable(false)) {
             getPlugin().getLogger().info("Baked " + getFileName());
@@ -73,17 +94,23 @@ public abstract class Yaml extends YamlConfiguration implements Baker {
         }
     }
 
-    @SneakyThrows
     public void saveToFile() {
         unbake();
-        super.save(yamlFile);
+        try {
+            super.save(yamlFile);
+        } catch (IOException e) {
+            Bukkit.getLogger().severe(e.getMessage());
+        }
         bake();
     }
 
-    @SneakyThrows
     public void loadFromFile() {
         unbake();
-        super.load(yamlFile);
+        try {
+            super.load(yamlFile);
+        } catch (IOException | InvalidConfigurationException e) {
+            Bukkit.getLogger().severe(e.getMessage());
+        }
         bake();
     }
 }

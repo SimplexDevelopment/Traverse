@@ -44,7 +44,7 @@ public class GroupCMD extends AbstractCommandBase {
         Arrays.stream(ranks)
                 .filter(rank -> rank.getAttachment().getName().equalsIgnoreCase(group))
                 .findFirst()
-                .ifPresentOrElse(rankContext::setContext, () -> invalid.set(true));
+                .ifPresentOrElse(rankContext::setState, () -> invalid.set(true));
 
         if (invalid.get()) return Component.text("Invalid group!").color(NamedTextColor.RED);
 
@@ -79,24 +79,24 @@ public class GroupCMD extends AbstractCommandBase {
                 }
 
                 if (actionType) {
-                    manager.insertPlayer(rankContext.getContext(), player);
+                    manager.insertPlayer(rankContext.getState(), player);
                     manager.bake();
                     manager.save();
                     return Component.text("Added player " + player.getName() + " to group " + group + "!").color(NamedTextColor.GREEN);
                 } else {
-                    manager.ejectPlayer(rankContext.getContext(), player);
+                    manager.ejectPlayer(rankContext.getState(), player);
                     manager.bake();
                     manager.save();
                     return Component.text("Removed player " + player.getName() + " from group " + group + "!").color(NamedTextColor.GREEN);
                 }
             case "permission":
                 if (actionType) {
-                    manager.insertPermission(rankContext.getContext(), value);
+                    manager.insertPermission(rankContext.getState(), value);
                     manager.bake();
                     manager.save();
                     return Component.text("Added permission " + value + " to group " + group + "!").color(NamedTextColor.GREEN);
                 } else {
-                    manager.ejectPermission(rankContext.getContext(), value);
+                    manager.ejectPermission(rankContext.getState(), value);
                     manager.bake();
                     manager.save();
                     return Component.text("Removed permission " + value + " from group " + group + "!").color(NamedTextColor.GREEN);

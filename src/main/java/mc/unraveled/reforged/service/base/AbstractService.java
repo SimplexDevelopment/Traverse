@@ -48,7 +48,7 @@ public abstract class AbstractService implements IService {
      *
      * @param service_name A namespaced key which can be used to identify the service.
      */
-    public AbstractService(@NotNull String service_name) {
+    protected AbstractService(@NotNull String service_name) {
         this((new ServicePool("defaultPool" + Scheduling.denom, JavaPlugin.getPlugin(Traverse.class))),
                 service_name,
                 0L,

@@ -102,7 +102,7 @@ public final class Traverse extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        this.SQLManager = new DBConnectionHandler(new DBProperties("db.properties"));
+        this.SQLManager = new DBConnectionHandler(new DBProperties(this, "db.properties"));
         this.commandLoader = new CommandLoader(this, "TRAVERSE");
         this.dataManager = new DataManager(this);
         this.banManager = new BanManager(this);

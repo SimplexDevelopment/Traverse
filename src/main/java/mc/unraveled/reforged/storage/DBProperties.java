@@ -1,8 +1,11 @@
 package mc.unraveled.reforged.storage;
 
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -17,13 +20,21 @@ public class DBProperties {
     private final String username;
     private final String password;
 
-    public DBProperties(String fileName) {
+    public DBProperties(Plugin plugin, String fileName) {
+        File file = new File(plugin.getDataFolder(), fileName);
         properties = new Properties();
-        try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
+
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            if (file.createNewFile()) {
+                Bukkit.getLogger().info("Created new properties file.");
+                plugin.saveResource("db.properties", true);
+            }
+
             properties.load(fileInputStream);
         } catch (IOException e) {
-            Bukkit.getLogger().severe("Could not load database properties file!");
+            Bukkit.getLogger().severe("Error loading properties file!" + e.getMessage());
         }
+
         driver = properties.getProperty("driver");
         databaseType = properties.getProperty("databaseType");
         databaseFile = properties.getProperty("databaseFile");
